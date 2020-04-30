@@ -1,6 +1,8 @@
 package graph.impl;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import graph.INode;
 
@@ -23,105 +25,58 @@ import graph.INode;
 public class Node implements INode
 {
     
-    /**
-     * Create a new node with the given name. The newly created node should
-     * have no edges.
-     * 
-     * @param name
-     */
-    public Node(String name) {
-        throw new UnsupportedOperationException("Implement this method");
-    }
-    
-    
-    
-    /**
-     * Return the name of the node, which is a String.
-     * 
-     * @return
-     */
-    public String getName() {
-        throw new UnsupportedOperationException("Implement this method");
-    }
+	private String name;
+	private Map<INode, Integer> neighbors = new HashMap<>();
 
-    /**
-     * Return a collection of nodes that the current node is connected to by an edge.
-     * 
-     * @return
-     */
-    public Collection<INode> getNeighbors() {
-        throw new UnsupportedOperationException("Implement this method");
-    }
-    
-    /**
-     * Add a directed edge to the given node using the given weight.
-     * 
-     * @param n
-     * @param weight
-     */
-    public void addDirectedEdgeToNode(INode n, int weight) {
-        throw new UnsupportedOperationException("Implement this method");
-    }
-    
-    /**
-     * Add an undirected edge to the given node using the given weight.
-     * Remember than an undirected edge can be implemented using two directed edges.
-     * 
-     * @param n
-     * @param weight
-     */
-    public void addUndirectedEdgeToNode(INode n, int weight) {
-        throw new UnsupportedOperationException("Implement this method");
-    }
+	public Node(String n) { 
+		this.name = n;
+	}
+	
+	@Override
+	public String getName() {
+		return name;
+	}
 
-    /**
-     * Remove the directed edge to the given node.
-     * 
-     * If there is no edge to the given node, throw
-     * IllegalStateException (which is a type of runtime exception).
-     * 
-     * @param n
-     * @throws IllegalStateException
-     */
-    public void removeDirectedEdgeToNode(INode n) {
-        throw new UnsupportedOperationException("Implement this method");
-    }
-    
-    /**
-     * Remove an undirected edge to the given node. This means removing
-     * the edge to the given node, but also any edge from the given
-     * node back to this node.
-     * 
-     * Throw a IllegalStateException if there is no edge to the given node.
-     * 
-     * @param n
-     * @throws IllegalStateException
-     */
-    public void removeUndirectedEdgeToNode(INode n) {
-        throw new UnsupportedOperationException("Implement this method");
-    }
-    
-    /**
-     * Return true if there is an edge to the given node from this node,
-     * and false otherwise.
-     * 
-     * @param other
-     * @return
-     */
-    public boolean hasEdge(INode other) {
-        throw new UnsupportedOperationException("Implement this method");
-    }
-    
-    /**
-     * Get the weight of the edge to the given node.
-     * 
-     * If no such edge exists, throw {@link IllegalStateException}
-     * 
-     * @param n
-     * @return
-     * @throws IllegalStateException
-     */
-    public int getWeight(INode n) {
-        throw new UnsupportedOperationException("Implement this method");
-    }
+	@Override
+	public Collection<INode> getNeighbors() {
+		return neighbors.keySet();
+
+	}
+
+	@Override
+	public void addDirectedEdgeToNode(INode neighbor, int weight) {
+		neighbors.put(neighbor, weight);
+		
+	}
+
+	@Override
+	public void addUndirectedEdgeToNode(INode neighbor, int weight) {
+		addDirectedEdgeToNode(neighbor, weight);
+	    neighbor.addDirectedEdgeToNode(this, weight);
+	}
+
+	@Override
+	public void removeDirectedEdgeToNode(INode neighbor) {
+		neighbors.remove(neighbor);	
+		
+	}
+
+	@Override
+	public void removeUndirectedEdgeToNode(INode neighbor) {
+		removeDirectedEdgeToNode(neighbor);
+		neighbor.removeDirectedEdgeToNode(this);
+	}
+
+	@Override
+	public boolean hasEdge(INode node) {
+		if(neighbors.containsKey(node)) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public int getWeight(INode node) {
+		return neighbors.get(node);
+	}
 }
