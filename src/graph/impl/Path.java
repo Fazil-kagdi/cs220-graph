@@ -4,11 +4,11 @@ import graph.INode;
 
 public class Path implements Comparable<Path>{
 	 
-	  INode destination;
+	  INode name;
 	  int cost;
 
-	  public Path(INode destination, int cost){
-	    this.destination = destination;
+	  public Path(INode name, int cost){
+	    this.name = name;
 	    this.cost = cost;
 	  }
 

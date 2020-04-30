@@ -93,26 +93,46 @@ public class Graph implements IGraph
 
 	@Override
 	public Map<INode, Integer> dijkstra(String sourceNode) {	
-		Map<INode,Integer> result = new HashMap<>();
-        PriorityQueue<Path> toDo = new PriorityQueue<>();
-        toDo.add(new Path(getOrCreateNode(sourceNode),0));
-        while ( result.size() < getAllNodes().size()) {
-        	Path nextpath = toDo.poll();
-        	INode Node1 = nextpath.destination;
-        	if (result.containsKey(Node1))
+		Map<INode,Integer> res = new HashMap<>();
+        PriorityQueue<Path> qu = new PriorityQueue<>();
+        qu.add(new Path(getOrCreateNode(sourceNode),0));
+        while ( res.size() < getAllNodes().size()) {
+        	Path n = qu.poll();
+        	INode Node1 = n.name;
+        	if (res.containsKey(Node1))
         		continue;
-        	int cost = nextpath.cost;
-        	result.put(Node1, cost);
+        	int cost = n.cost;
+        	res.put(Node1, cost);
         	for(INode temp : Node1.getNeighbors()) {
-        		toDo.add(new Path(temp, Node1.getWeight(temp)+cost));
+        		qu.add(new Path(temp, Node1.getWeight(temp)+cost));
         	}	
         }
-        return result; 
+        return res; 
 	}
 
 	@Override
 	public IGraph primJarnik() {
-		// TODO Auto-generated method stub
-		return null;
+		IGraph res = new Graph();
+		INode start = (INode) this.getAllNodes().toArray()[0]; //Thanks to Choudry
+		PriorityQueue<edge> qu = new PriorityQueue<>();
+		for(INode temp : start.getNeighbors()) {
+			qu.add(new edge(start,temp,start.getWeight(temp)));
+		}
+		while(res.getAllNodes().size()!=this.getAllNodes().size()) {
+			edge e = qu.poll();
+			INode node1 = e.n1;
+			INode node2 = e.n2;
+			if(res.containsNode(node1.getName()) && res.containsNode(node2.getName()))
+				continue;
+			INode first = res.getOrCreateNode(node1.getName());
+			INode second = res.getOrCreateNode(node2.getName());
+			first.addUndirectedEdgeToNode(second,e.weight);
+			for(INode temp : node2.getNeighbors()) {
+        		if (!temp.equals(node1)) {
+        		qu.add(new edge(node2,temp,node2.getWeight(temp)));
+        		}
+        	}
+		}
+		return res;
 	}
 }
